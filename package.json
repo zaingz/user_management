@@ -6,14 +6,15 @@
   ],
   "scripts": {
     "start": "concurrently \"npm run start:app\" \"npm run start:api\"",
-    "start:app": "bun run packages/app/src/server.tsx",
+    "start:app": "bun run build:app && bun run packages/app/src/server.tsx",
     "start:api": "bun run packages/api/src/index.ts",
     "dev": "concurrently \"npm run dev:app\" \"npm run dev:api\"",
     "dev:app": "bun --watch run packages/app/src/server.tsx",
     "dev:api": "bun --watch run packages/api/src/index.ts",
-    "build:app": "bun build packages/app/src/client.tsx --outdir packages/app/dist",
+    "build:app": "bun run build:css && bun build ./packages/app/src/client.tsx --outdir ./packages/app/dist",
     "fe": "bun run build:app && bun run start:app",
-    "be": "bun run start:api"
+    "be": "bun run start:api",
+    "build:css": "tailwindcss -i ./packages/app/src/index.css -o ./packages/app/dist/index.css"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"

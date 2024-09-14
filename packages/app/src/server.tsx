@@ -11,6 +11,8 @@ serve({
 
     if (url.pathname === '/') {
       filePath = join(import.meta.dir, "../index.html");
+    } else if (url.pathname === '/index.css') {
+      filePath = join(import.meta.dir, "../dist/index.css");
     } else {
       filePath = join(import.meta.dir, "../dist", url.pathname);
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserTable from './components/UserTable';
+import UserProfile from './components/UserProfile';
 
 interface User {
   id: number;
@@ -16,6 +17,8 @@ const App: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [newUser, setNewUser] = useState({ name: '', email: '' });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [currentRoute, setCurrentRoute] = useState('/');
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchUsers(currentPage);
@@ -42,7 +45,13 @@ const App: React.FC = () => {
   };
 
   const handleUserClick = (userId: number) => {
-    console.log(`User clicked: ${userId}`);
+    setSelectedUserId(userId);
+    setCurrentRoute(`/user/${userId}`);
+  };
+
+  const handleBackToList = () => {
+    setCurrentRoute('/');
+    setSelectedUserId(null);
   };
 
   const handleDeleteUser = async (userId: number) => {
@@ -93,48 +102,84 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">User Management</h1>
-      
-      <form onSubmit={handleCreateUser} className="mb-4">
-        <input
-          type="text"
-          name="name"
-          value={newUser.name}
-          onChange={handleInputChange}
-          placeholder="Name"
-          className="mr-2 p-2 border rounded"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          value={newUser.email}
-          onChange={handleInputChange}
-          placeholder="Email"
-          className="mr-2 p-2 border rounded"
-          required
-        />
-        <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-          Create User
-        </button>
-      </form>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+      <div className="max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-8 text-center">User Management</h1>
+        
+        {currentRoute === '/' ? (
+          <>
+            <div className="create-user-form">
+              <div className="px-8 py-6">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Create New User</h2>
+                <form onSubmit={handleCreateUser} className="space-y-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      id="name"
+                      value={newUser.name}
+                      onChange={handleInputChange}
+                      className="create-user-form input"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      id="email"
+                      value={newUser.email}
+                      onChange={handleInputChange}
+                      className="create-user-form input"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <button
+                      type="submit"
+                      className="create-user-form button"
+                    >
+                      Create User
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
 
-      {errorMessage && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <strong className="font-bold">Error:</strong>
-          <span className="block sm:inline"> {errorMessage}</span>
-        </div>
-      )}
+            {errorMessage && (
+              <div className="error-message" role="alert">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">
+                      <span className="font-medium">Error:</span> {errorMessage}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-      <UserTable
-        users={users}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-        onUserClick={handleUserClick}
-        onDeleteUser={handleDeleteUser}
-      />
+            <UserTable
+              users={users}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onUserClick={handleUserClick}
+              onDeleteUser={handleDeleteUser}
+            />
+          </>
+        ) : (
+          <div className="bg-white shadow-md rounded-lg overflow-hidden max-w-2xl mx-auto">
+            <UserProfile userId={selectedUserId} onBackClick={handleBackToList} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
