@@ -1,0 +1,19 @@
+{
+  "name": "app",
+  "dependencies": {
+    "@types/react-router-dom": "^5.3.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "bun-types": "latest"
+  },
+  "scripts": {
+    "dev": "bun build ./src/client.tsx --outdir ./dist --watch",
+    "build": "bun build ./src/client.tsx --outdir ./dist",
+    "start": "bun run src/server.tsx"
+  }
+}

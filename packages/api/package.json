@@ -1,0 +1,14 @@
+{
+  "name": "api",
+  "dependencies": {
+    "@libsql/client": "^0.4.0",
+    "@elysiajs/cors": "^0.7.0",
+    "drizzle-orm": "^0.29.3",
+    "elysia": "^0.7.15",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "drizzle-kit": "^0.20.9"
+  }
+}

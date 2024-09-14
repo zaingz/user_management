@@ -1,0 +1,24 @@
+{
+  "name": "searchland",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "concurrently \"npm run start:app\" \"npm run start:api\"",
+    "start:app": "bun run packages/app/src/server.tsx",
+    "start:api": "bun run packages/api/src/index.ts",
+    "dev": "concurrently \"npm run dev:app\" \"npm run dev:api\"",
+    "dev:app": "bun --watch run packages/app/src/server.tsx",
+    "dev:api": "bun --watch run packages/api/src/index.ts",
+    "build:app": "bun build packages/app/src/client.tsx --outdir packages/app/dist",
+    "fe": "bun run build:app && bun run start:app",
+    "be": "bun run start:api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "dependencies": {
+    "react-router-dom": "^6.26.2"
+  }
+}
