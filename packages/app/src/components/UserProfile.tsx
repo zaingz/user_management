@@ -1,25 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { User } from '@searchland/shared';
+import { fetchUser } from '../api/userApi';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  created_at: string;
-}
-
-interface UserProfileProps {
-  API_BASE_URL: string;
-}
-
-const UserProfile: React.FC<UserProfileProps> = ({ API_BASE_URL }) => {
+const UserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { userId } = useParams<{ userId: string }>();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const getUserData = async () => {
       if (!userId) {
         setError('User ID is missing');
         setLoading(false);
@@ -27,12 +18,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ API_BASE_URL }) => {
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/users/${userId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user');
-        }
-        const data = await response.json();
-        setUser(data.body);
+        const userData = await fetchUser(parseInt(userId, 10));
+        setUser(userData);
       } catch (error) {
         setError('Error fetching user data');
         console.error('Error fetching user:', error);
@@ -41,8 +28,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ API_BASE_URL }) => {
       }
     };
 
-    fetchUser();
-  }, [userId, API_BASE_URL]);
+    getUserData();
+  }, [userId]);
 
   if (loading) {
     return (

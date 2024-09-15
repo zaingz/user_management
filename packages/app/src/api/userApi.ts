@@ -1,4 +1,4 @@
-import type { User, NewUser } from '../types';
+import { User, CreateUserInput } from '@searchland/shared';
 
 const API_BASE_URL = 'http://localhost:3001/api/v1';
 
@@ -11,7 +11,7 @@ export const fetchUsers = async (page: number): Promise<{ users: User[], total: 
   return data.body;
 };
 
-export const createUser = async (newUser: NewUser): Promise<User> => {
+export const createUser = async (newUser: CreateUserInput): Promise<User> => {
   const response = await fetch(`${API_BASE_URL}/users`, {
     method: 'POST',
     headers: {
@@ -33,4 +33,13 @@ export const deleteUser = async (userId: number): Promise<void> => {
   if (!response.ok) {
     throw new Error('Failed to delete user');
   }
+};
+
+export const fetchUser = async (userId: number): Promise<User> => {
+  const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user: ${response.status} ${response.statusText}`);
+  }
+  const data = await response.json();
+  return data.body;
 };

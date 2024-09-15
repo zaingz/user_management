@@ -3,9 +3,8 @@ import { BrowserRouter as Router, Route, Routes, Link, useLocation, useNavigate 
 import UserTable from './components/UserTable';
 import UserProfile from './components/UserProfile';
 import CreateUserForm from './components/CreateUserForm';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // Add React Query imports
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const API_BASE_URL = 'http://localhost:3001/api/v1';
 
 const queryClient = new QueryClient();
 
@@ -55,9 +54,9 @@ const App: React.FC = () => {
           <div className="max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-8">
             <Header />
             <Routes>
-              <Route path="/" element={<UserTable API_BASE_URL={API_BASE_URL} />} />
-              <Route path="/create" element={<CreateUserForm API_BASE_URL={API_BASE_URL} />} />
-              <Route path="/user/:userId" element={<UserProfile API_BASE_URL={API_BASE_URL} />} />
+              <Route path="/" element={<UserTable />} />
+              <Route path="/create" element={<CreateUserForm />} />
+              <Route path="/user/:userId" element={<UserProfile  />} />
             </Routes>
           </div>
         </div>

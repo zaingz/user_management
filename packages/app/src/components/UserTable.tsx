@@ -1,40 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchUsers, deleteUser } from '../api/userApi';
+import { User } from '@searchland/shared';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  created_at: string;
-}
-
-interface UserTableProps {
-  API_BASE_URL: string;
-}
-
-const UserTable: React.FC<UserTableProps> = ({ API_BASE_URL }) => {
+const UserTable: React.FC = ({ }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage]);
-
-  const fetchUsers = async (page: number) => {
+  const fetchUsersData = async (page: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users?page=${page}&limit=10`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch users: ${response.status} ${response.statusText}`);
-      }
-      const data = await response.json();
-      setUsers(data.body.users);
-      setTotalPages(Math.ceil(data.body.total / data.body.limit));
+      const data = await fetchUsers(page);
+      setUsers(data.users);
+      setTotalPages(Math.ceil(data.total / data.limit));
     } catch (error) {
       console.error('Error fetching users:', error);
     }
   };
+
+  useEffect(() => {
+    fetchUsersData(currentPage);
+  }, [currentPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -46,13 +33,8 @@ const UserTable: React.FC<UserTableProps> = ({ API_BASE_URL }) => {
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete user');
-      }
-      await fetchUsers(currentPage);
+      await deleteUser(userId);
+      await fetchUsersData(currentPage);
     } catch (error) {
       console.error('Error deleting user:', error);
     }

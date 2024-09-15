@@ -1,23 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query'; // Add React Query hooks
-import { createUser } from '../api/userApi'; // Ensure correct import
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createUser } from '../api/userApi';
 
-interface CreateUserFormProps {
-  API_BASE_URL: string;
-}
-
-const CreateUserForm: React.FC<CreateUserFormProps> = ({ API_BASE_URL }) => {
+const CreateUserForm: React.FC = () => {
   const [newUser, setNewUser] = useState({ name: '', email: '' });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const mutation = useMutation(createUser, {
     onSuccess: () => {
       setSuccessMessage('User created successfully!');
-      setNewUser({ name: '', email: '' }); // Reset form
-      queryClient.invalidateQueries(['users']); // Invalidate and refetch users
+      setNewUser({ name: '', email: '' });
+      queryClient.invalidateQueries(['users']);
     },
     onError: (error: Error) => {
       setErrorMessage(error.message);
@@ -48,9 +42,9 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ API_BASE_URL }) => {
   }, [successMessage, errorMessage]);
 
   return (
-    <div className="create-user-form">
-      <div className="px-8 py-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Create New User</h2>
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="px-6 py-4">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Create New User</h2>
         {successMessage && (
           <div className="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
             <strong className="font-bold">Success!</strong>
@@ -65,33 +59,33 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ API_BASE_URL }) => {
         )}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
             <input
               type="text"
               name="name"
               id="name"
               value={newUser.name}
               onChange={handleInputChange}
-              className="create-user-form input"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               required
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email:</label>
             <input
               type="email"
               name="email"
               id="email"
               value={newUser.email}
               onChange={handleInputChange}
-              className="create-user-form input"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               required
             />
           </div>
           <div>
             <button
               type="submit"
-              className="create-user-form button"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Create User
             </button>
