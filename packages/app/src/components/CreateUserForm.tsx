@@ -1,22 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createUser } from '../api/userApi';
+import { useCreateUserMutation } from '../api/userApi';
 
 const CreateUserForm: React.FC = () => {
   const [newUser, setNewUser] = useState({ name: '', email: '' });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const queryClient = useQueryClient();
-  const mutation = useMutation(createUser, {
-    onSuccess: () => {
-      setSuccessMessage('User created successfully!');
-      setNewUser({ name: '', email: '' });
-      queryClient.invalidateQueries(['users']);
-    },
-    onError: (error: Error) => {
-      setErrorMessage(error.message);
-    },
-  });
+  const createUserMutation = useCreateUserMutation();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,7 +16,15 @@ const CreateUserForm: React.FC = () => {
     e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
-    mutation.mutate(newUser); // Use mutation to create user
+    createUserMutation.mutate(newUser, {
+      onSuccess: () => {
+        setSuccessMessage('User created successfully!');
+        setNewUser({ name: '', email: '' });
+      },
+      onError: (error: Error) => {
+        setErrorMessage(error.message);
+      },
+    });
   };
 
   useEffect(() => {
@@ -35,7 +32,7 @@ const CreateUserForm: React.FC = () => {
       const timer = setTimeout(() => {
         setSuccessMessage(null);
         setErrorMessage(null);
-      }, 5000); // Hide messages after 5 seconds
+      }, 5000);
 
       return () => clearTimeout(timer);
     }

@@ -1,4 +1,5 @@
 import { User, CreateUserInput } from '@searchland/shared';
+import { UseMutationResult, useQueryClient, useMutation } from '@tanstack/react-query';
 
 const API_BASE_URL = 'http://localhost:3001/api/v1';
 
@@ -24,6 +25,15 @@ export const createUser = async (newUser: CreateUserInput): Promise<User> => {
     throw new Error(`Failed to create user: ${response.status} ${response.statusText}. ${JSON.stringify(errorData)}`);
   }
   return response.json();
+};
+
+export const useCreateUserMutation = (): UseMutationResult<User, Error, CreateUserInput> => {
+  const queryClient = useQueryClient();
+  return useMutation(createUser, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['users']);
+    },
+  });
 };
 
 export const deleteUser = async (userId: number): Promise<void> => {
