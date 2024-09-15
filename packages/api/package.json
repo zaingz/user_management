@@ -1,11 +1,13 @@
 {
-  "name": "api",
+  "name": "@searchland/api",
+  "version": "1.0.0",
   "dependencies": {
     "@libsql/client": "^0.4.0",
     "@elysiajs/cors": "^0.7.0",
     "drizzle-orm": "^0.29.3",
     "elysia": "^0.7.15",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@searchland/shared": "workspace:*"
   },
   "devDependencies": {
     "bun-types": "latest",

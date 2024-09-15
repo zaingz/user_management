@@ -1,6 +1,3 @@
-import { z } from 'zod';
+import { createUserSchema } from '@searchland/shared';
 
-export const createUserSchema = z.object({
-    name: z.string().min(1),
-    email: z.string().email(),
-});
+export { createUserSchema };

@@ -4,6 +4,9 @@
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "@your-project/shared": ["../shared/src"]
+    }
   }
 }

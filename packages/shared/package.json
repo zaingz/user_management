@@ -1,4 +1,16 @@
 {
-    "name": "shared",
-    "version": "1.0.0"
-  }
+    "name": "@searchland/shared",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "type": "module",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "zod": "^3.x.x"
+    },
+    "devDependencies": {
+        "typescript": "^4.9.5"
+    }
+}

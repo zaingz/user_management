@@ -1,8 +1,3 @@
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  created_at: string;
-}
+import type { User, CreateUserInput } from '@searchland/shared';
 
-export type NewUser = ExistingTypeDefinition;
+export type { User, CreateUserInput };

@@ -9,8 +9,9 @@
     "dev": "concurrently \"bun run dev:app\" \"bun run dev:api\"",
     "dev:app": "cd packages/app && bun vite",
     "dev:api": "bun --watch packages/api/src/index.ts",
-    "build": "bun run build:app",
+    "build": "bun run build:shared && bun run build:app",
     "build:app": "cd packages/app && bunx vite build",
+    "build:shared": "cd packages/shared && bun run build",
     "preview": "cd packages/app && bun vite preview --port 3000",
     "start:api": "bun run packages/api/src/index.ts"
   },
