@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: number;
@@ -8,17 +9,57 @@ interface User {
 }
 
 interface UserTableProps {
-  users: User[];
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  onUserClick: (userId: number) => void;
-  onDeleteUser: (userId: number) => void;
+  API_BASE_URL: string;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ users, currentPage, totalPages, onPageChange, onUserClick, onDeleteUser }) => {
+const UserTable: React.FC<UserTableProps> = ({ API_BASE_URL }) => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchUsers(currentPage);
+  }, [currentPage]);
+
+  const fetchUsers = async (page: number) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users?page=${page}&limit=10`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch users: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      setUsers(data.body.users);
+      setTotalPages(Math.ceil(data.body.total / data.body.limit));
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleUserClick = (userId: number) => {
+    navigate(`/user/${userId}`);
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete user');
+      }
+      await fetchUsers(currentPage);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
   return (
-    <div className="flex justify-center">
+    <div>
       <div className="overflow-x-auto shadow-lg rounded-lg">
         <table className="min-w-full bg-white">
           <thead className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
@@ -53,13 +94,13 @@ const UserTable: React.FC<UserTableProps> = ({ users, currentPage, totalPages, o
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
-                    onClick={() => onUserClick(user.id)}
+                    onClick={() => handleUserClick(user.id)}
                     className="text-indigo-600 hover:text-indigo-900 mr-2"
                   >
                     View
                   </button>
                   <button
-                    onClick={() => onDeleteUser(user.id)}
+                    onClick={() => handleDeleteUser(user.id)}
                     className="text-red-600 hover:text-red-900"
                   >
                     Delete
@@ -70,35 +111,40 @@ const UserTable: React.FC<UserTableProps> = ({ users, currentPage, totalPages, o
           </tbody>
         </table>
       </div>
-      {/* Pagination Controls */}
-      <div className="mt-4">
-        <nav className="flex items-center justify-center" aria-label="Pagination">
+      <div className="mt-4 flex justify-center">
+        <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
           <button
-            onClick={() => onPageChange(currentPage - 1)}
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-3 py-1 mx-1 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
           >
-            Previous
+            <span className="sr-only">Previous</span>
+            <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
           </button>
           {[...Array(totalPages)].map((_, i) => (
             <button
               key={i}
-              onClick={() => onPageChange(i + 1)}
-              className={`px-3 py-1 mx-1 border rounded-md text-sm font-medium ${
+              onClick={() => handlePageChange(i + 1)}
+              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                 currentPage === i + 1
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                  : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
               }`}
             >
               {i + 1}
             </button>
           ))}
           <button
-            onClick={() => onPageChange(currentPage + 1)}
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 mx-1 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
           >
-            Next
+            <span className="sr-only">Next</span>
+            <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
           </button>
         </nav>
       </div>

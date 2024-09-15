@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 interface User {
   id: number;
@@ -7,17 +8,15 @@ interface User {
   created_at: string;
 }
 
-const API_BASE_URL = 'http://localhost:3001/api/v1';
-
 interface UserProfileProps {
-  userId: number | null;
-  onBackClick: () => void;
+  API_BASE_URL: string;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ userId, onBackClick }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ API_BASE_URL }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { userId } = useParams<{ userId: string }>();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,36 +42,60 @@ const UserProfile: React.FC<UserProfileProps> = ({ userId, onBackClick }) => {
     };
 
     fetchUser();
-  }, [userId]);
+  }, [userId, API_BASE_URL]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">Error:</strong>
+        <span className="block sm:inline"> {error}</span>
+      </div>
+    );
   }
 
   if (!user) {
-    return <div>User not found</div>;
+    return (
+      <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">Warning:</strong>
+        <span className="block sm:inline"> User not found</span>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-8">
-      <button onClick={onBackClick} className="text-blue-500 hover:underline mb-4 inline-block">&larr; Back to User List</button>
-      <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
-          <p className="text-gray-900">{user.name}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Email:</label>
-          <p className="text-gray-900">{user.email}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Created At:</label>
-          <p className="text-gray-900">{new Date(user.created_at).toLocaleString()}</p>
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="px-6 py-4">
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">User Profile</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex justify-center sm:justify-start">
+            <img
+              className="h-32 w-32 rounded-full"
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&size=128`}
+              alt={user.name}
+            />
+          </div>
+          <div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+              <p className="text-gray-900 text-lg">{user.name}</p>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+              <p className="text-gray-900 text-lg">{user.email}</p>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Created At:</label>
+              <p className="text-gray-900 text-lg">{new Date(user.created_at).toLocaleString()}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

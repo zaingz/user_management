@@ -1,4 +1,4 @@
-import { User, NewUser } from '../types';
+import type { User, NewUser } from '../types';
 
 const API_BASE_URL = 'http://localhost:3001/api/v1';
 

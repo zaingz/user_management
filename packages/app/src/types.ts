@@ -5,7 +5,4 @@ export interface User {
   created_at: string;
 }
 
-export interface NewUser {
-  name: string;
-  email: string;
-}
+export type NewUser = ExistingTypeDefinition;
